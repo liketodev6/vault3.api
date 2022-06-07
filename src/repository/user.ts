@@ -21,7 +21,7 @@ export class UserRepository {
 
   public getById = async (id: number): Promise<User> => {
     return await db.from(schemaReferences.user).first().where({
-      id: id
+      id
     })
   };
 
@@ -37,6 +37,11 @@ export class UserRepository {
       .where({
         id
       });
+  };
+
+  public findExists = async (username: string, email: string): Promise<boolean> => {
+    const user = await db.from(schemaReferences.user).first().where({ email }); // discuss case in username
+    return !!user;
   };
 
 };    

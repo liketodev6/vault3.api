@@ -5,7 +5,8 @@ const TYPES = {
   paymentService: 'PaymentService',
   priceingManager: 'PriceingManager',
   storageManager: 'StorageManager',
-  transactionManager: 'TransactionManager'
+  transactionManager: 'TransactionManager',
+  fileManager: 'FileManager'
 };
 
 export { TYPES };

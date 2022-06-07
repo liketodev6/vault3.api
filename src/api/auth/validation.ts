@@ -6,8 +6,16 @@ import { SignUpReqModel } from './model/req/signUp';
 import { ValidatePaymentReqModel } from './model/req/validatePayment';
 import StorageHelper from '../../helpers/storage';
 import { currencies } from '../../constants';
+import { inject } from 'inversify';
+import { TYPES } from '../../dependency/inversify.types';
+import IUserManager from '../../managers/user';
+import { myContainer } from '../../dependency/inversify.config';
 
 class AuthValidation {
+
+  constructor(
+    @inject(TYPES.userManager) private UserManager: IUserManager
+  ) {};
 
   public signUp = async (req: IRequest, res: Response, next: NextFunction) => {
     try {
@@ -22,6 +30,9 @@ class AuthValidation {
         return res.status(400).send(getResponse(false, result.error.details[0].message));
       };
 
+      const isExistsUser = await this.UserManager.findExists(body.username, body.email);
+      if (isExistsUser) return res.status(400).send(getResponse(false, 'Email or username are in using'));
+      
       req.body = body;
       return next();
     } catch (error) {
@@ -66,4 +77,6 @@ class AuthValidation {
 
 };
 
-export default new AuthValidation();
+export default new AuthValidation(
+  myContainer.get<IUserManager>(TYPES.userManager)
+);
